@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <h1 id="header"></h1>
+    <form method="post" action="/submit">
+        <div class="field">
+            <input id="name" name="username" class="item" onclick="deleteIndex()" placeholder="Enter your name" />
+            <button class="item" type="submit">Send</button>
+        </div>
+        <br><br>
+        OR
+        <br><br>
+        <div class="field">
+            <input id="index" name="index" class="item" placeholder="Enter index to delete" />
+            <button type="submit" class="item" onclick="deleteName()">Delete</button>
+        </div>
+    </form>
+    <br>
+    <a href="/data">See data.</a>
+    <script src="index.js">
+    </script>
+</body>
