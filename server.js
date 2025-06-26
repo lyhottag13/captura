@@ -78,11 +78,11 @@ app.get('/app', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'app.html'));
 });
 
-app.post('/api/send', (req, res) => {
+app.post('/api/send', async (req, res) => {
     const { output } = req.body;
     console.log(output);
     try {
-        pool.execute(output);
+        await pool.execute(output);
     } catch (err) {
         console.log(err);
     }
