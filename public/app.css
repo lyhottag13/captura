@@ -48,10 +48,9 @@ h1 {
 }
 
 .panel {
-    display: flex;
+    display: grid;
     justify-content: center;
     text-align: center;
-    padding: 10px;
     margin: 10px;
     border-radius: 20px;
     width: 90%;

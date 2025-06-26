@@ -46,42 +46,55 @@ table.style.gridTemplateRows = CHECKS / 2;
 
 const panels = [];
 for (let i = 0; i < CHECKS; i++) {
+    const numberDiv = document.createElement('div');
+    numberDiv.style.position = 'absolute';
+    numberDiv.style.height = '50px';
+    numberDiv.style.width = '50px';
+    numberDiv.style.borderTopLeftRadius = '20px';
+    numberDiv.style.borderBottomRightRadius = '20px';
+    numberDiv.style.fontSize = '35px';
+    numberDiv.style.backgroundColor = 'darkgreen';
+    numberDiv.style.alignSelf = 'start';
+    numberDiv.style.alignContent = 'center';
+    numberDiv.innerText = i + 1;
+
     const newPanel = document.createElement('div');
-    newPanel.style.display = 'flex';
-    newPanel.style.flexDirection = 'row';
-    // newPanel.style.paddingTop = '30px';
-    // newPanel.style.paddingBottom = '30px';
-    newPanel.style.gap = '10px';
+    newPanel.style.gridTemplateColumns = '1fr 0fr';
     newPanel.style.alignItems = 'center';
     newPanel.style.backgroundColor = 'green';
-    newPanel.innerText = `${i + 1} - TESTING GRID`;
+    newPanel.innerText = 'TESTING GRID';
     newPanel.style.color = 'white';
     newPanel.className = 'panel';
     newPanel.id = i;
     newPanel.addEventListener('click', () => {
         if (panels[i].pass === true) {
             newPanel.style.backgroundColor = 'red';
+            numberDiv.style.backgroundColor = 'darkred';
             panels[i].pass = false;
         } else {
             newPanel.style.backgroundColor = 'green';
+            numberDiv.style.backgroundColor = 'darkgreen';
             panels[i].pass = true;
         }
     });
+
     const newImage = document.createElement('img');
-    newImage.style.height = '150px';
-    newImage.style.width = '150px';
-    // newImage.style.position = 'relative';
-    // newImage.style.left = '50%';
-    // newImage.style.transform = 'translateX(-50%)';
+    newImage.style.height = '200px';
+    newImage.style.width = '200px';
+    newImage.style.borderBottomRightRadius = '20px';
+    newImage.style.borderTopRightRadius = '20px';
     newImage.src = images[i].src;
+
     table.appendChild(newPanel);
     newPanel.appendChild(newImage);
-    panels.push({ panel: newPanel, pass: true });
+    newPanel.appendChild(numberDiv);
+    panels.push({ panel: newPanel, number: numberDiv, pass: true });
 }
 
 function submit() {
     if (!isValidId()) {
         window.alert('ID invalida. Por favor, introduzca una identificacion de 6 caracteres.');
+        scrollToTop();
         return;
     }
     output = `INSERT INTO breville2 VALUES ("${document.getElementById('input').value}"`;
@@ -95,6 +108,7 @@ function submit() {
     });
     output += ");";
     input.value = '';
+    reset();
     fetch('/api/send', {
         method: "POST",
         headers: {
@@ -108,4 +122,22 @@ function submit() {
 
 function isValidId() {
     return input.value.length === 6;
+}
+
+function reset() {
+    scrollToTop();
+    input.value = '';
+    panels.forEach(element => {
+        element.panel.style.backgroundColor = 'green';
+        element.number.style.backgroundColor = 'darkgreen';
+        element.pass = true;
+    })
+}
+
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+    });
 }
