@@ -1,4 +1,5 @@
 import { pool } from './db/db.js';
+import { password } from './password.js';
 
 import path from 'path';
 import express from 'express';
@@ -38,9 +39,8 @@ app.post('/api/send', async (req, res) => {
 
 // Receives the password from the user's input. Change PASSWORD to whatever you need.
 app.post('/api/password', async (req, res) => {
-    const PASSWORD = 'password';
-    const { password } = req.body;
-    if (password === PASSWORD) {
+    const { password: userInput } = req.body;
+    if (userInput === password) {
         // Returns a JSON file that states, this password is good.
         res.json({ goodPassword: true });
     } else {
