@@ -1,13 +1,13 @@
 export const hidePassword = () => {
     document.getElementById('passwordDiv').remove();
 }
-export async function submitPassword(password) {
+export async function submitPassword(userInput) {
     const res = await fetch('/api/password', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ userInput })
     });
     const data = await res.json();
     const { goodPassword } = data;

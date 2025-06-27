@@ -1,5 +1,5 @@
 import pool from './db/db.js';
-import password from './passwordWord.js';
+import correctPassword from './passwordWord.js';
 
 import path from 'path';
 import express from 'express';
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 // Runs the app on port PORT, so anyone can access on LAN on <IP Address>:<PORT>
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0',() => {
     console.log(`Example app listening on port ${PORT}`);
 });
 
@@ -39,11 +39,11 @@ app.post('/api/send', async (req, res) => {
 
 // Receives the password from the user's input. Change PASSWORD to whatever you need.
 app.post('/api/password', async (req, res) => {
-    const { password: userInput } = req.body;
-    if (userInput === password) {
-        // Returns a JSON file with the validity of the password.
-        res.json({ goodPassword: true });
-    } else {
-        res.json({ goodPassword: false });
-    }
+    const { userInput } = req.body;
+    /*
+        Sends a JSON response containing the validity of the password. I wanted
+        this server-side even though it's unlikely an operator will go
+        through the code through the tablet to find the correct password.
+    */ 
+    res.json({ goodPassword: userInput === correctPassword });
 });
