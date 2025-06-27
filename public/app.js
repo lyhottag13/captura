@@ -6,8 +6,6 @@ import checkPanels from './tools/checkPanels.js';
     doesn't match the number of checks in the database, there will be a
     mismatch error in the SQL query, so be careful.
 */
-const CHECKS = 50;
-
 async function main() {
     // Asks the user for a password, and only continues if it was good.
     initializePasswordQuery(handleSubmit);
@@ -35,11 +33,11 @@ idInput.addEventListener('selectionchange', () => {
     }
 });
 
-// Controls the clock, useful for the employee to see what time it is.
+// Controls the clock, useful for the operator to see what time it is.
 const header = document.getElementById('header');
 setInterval(() => {
     header.innerText = `Inspeccion de Calidad Ensamblaje - ${new Date().toLocaleString()}`;
-})
+});
 
 /**
  * Initializes each of the panels needed for all the checks. There are only
@@ -91,7 +89,7 @@ function initializePanels() {
  * Submits the ID, notes, and each panel's pass/fail state to the server.
  * There is a confirmation, a valid ID check, and an error check before the
  * submit can be considered fully completed. 
- * @returns 
+ * @returns nothing, just used to break out of the function.
  */
 async function submitInspection() {
     const confirm = window.confirm('Confirmar submision?');
@@ -106,9 +104,12 @@ async function submitInspection() {
     /* 
         Builds the SQL string dynamically, so that we can handle 10, 20, or 50 checks.
         The sequence for the string goes (id, check1, check2, ... , check n, notes).
-        They're all VARCHAR.
+        They're all VARCHAR. 
+        Sidenote, there's no possibility for SQL injection, since the
+        user can't directly input into the SQL string.
     */
     let SQLstring = `INSERT INTO breville2 VALUES ("${document.getElementById('input').value}"`;
+    // Appends to the SQL string a pass or fail state for each panel.
     checkPanels.forEach(panel => {
         SQLstring += ', ';
         if (panel.pass === true) {
@@ -126,16 +127,14 @@ async function submitInspection() {
         body: JSON.stringify({ SQLstring })
     });
     const data = await res.json();
-
     console.log(data);
-
     // If there is no error, then the submission was successful. Else, it describes the error.
     if (!data.err) {
         window.alert('Submision exitosa.');
         reset();
     } else {
         const errorNumber = data.err.errno;
-        let errorMessage = 'Algo fue mal. Comunicase con su departamento de IT.';
+        let errorMessage = 'Algo fue mal. Comunicase con su departamento de TI.';
         if (errorNumber === 1062) {
             // Duplicate entry error.
             errorMessage = 'Ya existe una entrada con ese identificador. Intente otro.';
@@ -145,6 +144,12 @@ async function submitInspection() {
     }
 }
 
+/**
+ * Checks to see whether or not the ID in the input box is valid. We only
+ * want an ID that has exactly six numbers and no letters. If the ID 
+ * doesn't pass both these checks, then it is invalid.
+ * @returns whether or not the ID is valid.
+ */
 function isValidId() {
     let valid = true;
     for (let i = 0; i < idInput.value.length; i++) {
@@ -154,7 +159,9 @@ function isValidId() {
     }
     return idInput.value.length === 6 && valid;
 }
-
+/**
+ * Resets the web app's screen so that everything is back to its default state.
+ */
 function reset() {
     scrollToTop();
     idInput.value = '';

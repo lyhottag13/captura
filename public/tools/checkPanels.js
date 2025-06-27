@@ -50,4 +50,6 @@ for (let i = 0; i < checkNumber; i++) {
     newPanel.appendChild(passOrFail);
     panels.push({ panel: newPanel, number: numberDiv, passOrFail: passOrFail, pass: true });
 }
+
+
 export default panels;
