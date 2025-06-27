@@ -1,3 +1,6 @@
+import { hidePassword, submitPassword, initializePasswordQuery } from './tools/passwordUtils.js';
+import checkPanels from './tools/checkPanels.js';
+
 /*
     The total number of checks that will be performed. If this number
     doesn't match the number of checks in the database, there will be a
@@ -5,23 +8,14 @@
 */
 const CHECKS = 50;
 
-const panels = [];
 async function main() {
     // Asks the user for a password, and only continues if it was good.
-    queryPassword();
+    initializePasswordQuery(handleSubmit);
 }
 
-async function submitPassword(password) {
-    const res = await fetch('/api/password', {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ password })
-    });
-    const data = await res.json();
-    const { goodPassword } = data;
-    if (goodPassword === false) {
+async function handleSubmit(password) {
+    const isValidPassword = await submitPassword(password);
+    if (isValidPassword === false) {
         // Reloads the page if the password was incorrect to prevent use.
         window.location.href = '/';
     } else {
@@ -29,96 +23,6 @@ async function submitPassword(password) {
         reset();
         hidePassword();
     }
-}
-function queryPassword() {
-    const passwordDiv = document.createElement('div');
-    passwordDiv.id = 'passwordDiv';
-    passwordDiv.innerText = 'Ingresa contraseña';
-    const passwordField = document.createElement('input');
-    passwordField.id = 'passwordField';
-    const passwordSubmit = document.createElement('button');
-    passwordSubmit.innerText = 'Enviar';
-    passwordSubmit.addEventListener('click', () => {
-        submitPassword(passwordField.value);
-    })
-    passwordDiv.appendChild(passwordField);
-    passwordDiv.appendChild(passwordSubmit);
-    document.body.appendChild(passwordDiv);
-    hidePassword = () => {
-        passwordDiv.style.display = 'none';
-    }
-}
-
-const submitButton = document.getElementById('submit');
-
-const images = initializeImages();
-
-function initializeImages() {
-    const images = [];
-    for (let i = 0; i < CHECKS; i++) {
-        newImage = new Image();
-        newImage.src = `assets/step${i + 1}.png`; // i + 1 is used since the index is off by one.
-        newImage.alt = `step ${i + 1}`;
-        newImage.style.height = '100px';
-        newImage.style.width = '100px';
-        images.push(newImage);
-    }
-    return images;
-}
-
-// Contains all the key phrases for the panels.
-const stepKeyPhrases = [];
-{
-    stepKeyPhrases.push("2 tornillos Ctrl Panel"); // 1.
-    stepKeyPhrases.push("Panel de aislamiento");
-    stepKeyPhrases.push("Protección mangueras"); // NEW 3
-    stepKeyPhrases.push("Cintillo de bolitas");
-    stepKeyPhrases.push("Ruteo de cables R & N");
-    stepKeyPhrases.push("Clip manguera superior");
-    stepKeyPhrases.push("2 tornillos TC-MB superior"); // Thermocoil Main Body
-    stepKeyPhrases.push("Malla TC centrado"); // NEW 8
-    stepKeyPhrases.push("3 cables amarillos TC");
-    stepKeyPhrases.push("Cintillo 3 cables amarillos TC");
-    stepKeyPhrases.push("Posición thermostat"); // NEW 11
-    stepKeyPhrases.push("Abrazadera steam valve");
-    stepKeyPhrases.push("3 cables V & A steam valve");
-    stepKeyPhrases.push("2 puntos welding"); // NEW 14
-    stepKeyPhrases.push("2 tornillos sensor TC");
-    stepKeyPhrases.push("Ruteo sensor TC");
-    stepKeyPhrases.push("Clips Thermocoil"); // NEW 17
-    stepKeyPhrases.push("Clip manguera Steam Valve");
-    stepKeyPhrases.push("Clip manguera TC");
-    stepKeyPhrases.push("2 tornillos válvulas-TC");
-    stepKeyPhrases.push("2 tornillos TC-MB frontal");
-    stepKeyPhrases.push("Terminales válvula izquierda");
-    stepKeyPhrases.push("Terminales válvula derecha");
-    stepKeyPhrases.push("Clips válvulas"); // NEW 24
-    stepKeyPhrases.push("Cintillo manguera bomba");
-    stepKeyPhrases.push("Cintillo cables rojo-naranja");
-    stepKeyPhrases.push("Cintillos baffle"); // NEW 27
-    stepKeyPhrases.push("Conexiones bomba");
-    stepKeyPhrases.push("Arnés rojo-blanco-verde");
-    stepKeyPhrases.push("2 tornillos TC-MB inferior");
-    stepKeyPhrases.push("2 tornillos heat sink");
-    stepKeyPhrases.push("4 tierras con tornillo TC");
-    stepKeyPhrases.push("Ruteo cables Ctrl Panel");
-    stepKeyPhrases.push("Cintillo cables Ctrl Panel");
-    stepKeyPhrases.push("Magneto con silicón"); // NEW 35
-    stepKeyPhrases.push("4 tornillos grinder");
-    stepKeyPhrases.push("Posición y movimiento dial");
-    stepKeyPhrases.push("4 tornillos PCB BOX");
-    stepKeyPhrases.push("2 tornillos sujetador AC");
-    stepKeyPhrases.push("Tubing AC"); // NEW 40
-    stepKeyPhrases.push("Crimpado terminales 1-7");
-    stepKeyPhrases.push("Crimpado terminales 8-11");
-    stepKeyPhrases.push("Ruteo cable rojo TC");
-    stepKeyPhrases.push("Amarre de cables");
-    stepKeyPhrases.push("Ruteo terminales 8 & 9");
-    stepKeyPhrases.push("Baffle Outlet Tube");
-    stepKeyPhrases.push("Botón grinder");
-    stepKeyPhrases.push("Botones Ctrl Panel");
-    stepKeyPhrases.push("Manómetro Ctrl Panel");
-    stepKeyPhrases.push("Estampado");
 }
 
 // Controls the ID input box and its color when it receives input.
@@ -146,58 +50,15 @@ setInterval(() => {
  */
 function initializePanels() {
     const checkTable = document.getElementById('checks');
-    for (let i = 0; i < CHECKS; i++) {
-        const numberDiv = document.createElement('div');
-        numberDiv.className = 'numberDiv';
-        numberDiv.innerText = i + 1;
-
-        const passOrFail = document.createElement('span');
-        passOrFail.className = 'passOrFail';
-        passOrFail.innerText = 'PASS';
-
-        const newPanel = document.createElement('div');
-        newPanel.className = 'panel';
-        newPanel.id = `panel${i}`;
-
-        newPanel.addEventListener('click', () => {
-            if (panels[i].pass === true) {
-                newPanel.style.backgroundColor = 'red';
-                newPanel.style.borderColor = 'red';
-                numberDiv.style.backgroundColor = 'darkred';
-                passOrFail.innerText = 'FAIL';
-                passOrFail.style.color = 'rgb(150, 0, 0)';
-                panels[i].pass = false;
-            } else {
-                newPanel.style.backgroundColor = 'green';
-                newPanel.style.borderColor = 'green';
-                numberDiv.style.backgroundColor = 'darkgreen';
-                passOrFail.innerText = 'PASS';
-                passOrFail.style.color = 'rgb(0, 49, 2)';
-                panels[i].pass = true;
-            }
-        });
-
-        const newSpan = document.createElement('span');
-        newSpan.innerText = stepKeyPhrases[i];
-        newSpan.style.fontSize = '35px';
-        newSpan.style.userSelect = 'none';
-        newSpan.style.mozUserSelect = 'none';
-        newSpan.style.msUserSelect = 'none';
-
-        const newImage = document.createElement('img');
-        newImage.className = 'checkImage';
-        newImage.src = images[i].src;
-
-
-        checkTable.appendChild(newPanel);
-        newPanel.appendChild(newSpan);
-        newPanel.appendChild(newImage);
-        newPanel.appendChild(numberDiv);
-        newPanel.appendChild(passOrFail);
-        panels.push({ panel: newPanel, number: numberDiv, passOrFail: passOrFail, pass: true });
-    }
+    checkPanels.forEach(panel => {
+        checkTable.appendChild(panel.panel);
+    });
     const notesPanel = document.createElement('div');
+    notesPanel.style.display = 'grid';
     notesPanel.style.width = '100%';
+    notesPanel.style.gridTemplateRows = '0fr 1fr';
+    notesPanel.style.alignItems = 'center';
+    notesPanel.style.justifyItems = 'center';
 
     const notesLabel = document.createElement('span');
     notesLabel.innerText = 'Notas:';
@@ -211,7 +72,7 @@ function initializePanels() {
     notes.cols = '40';
 
     const submitButton = document.createElement('button');
-    submitButton.addEventListener('click', () => submit());
+    submitButton.addEventListener('click', () => submitInspection());
     submitButton.id = 'submit';
     submitButton.innerText = 'Enviar';
     submitButton.addEventListener('mouseover', () => {
@@ -232,7 +93,7 @@ function initializePanels() {
  * submit can be considered fully completed. 
  * @returns 
  */
-async function submit() {
+async function submitInspection() {
     const confirm = window.confirm('Confirmar submision?');
     if (!confirm) {
         return;
@@ -248,7 +109,7 @@ async function submit() {
         They're all VARCHAR.
     */
     let SQLstring = `INSERT INTO breville2 VALUES ("${document.getElementById('input').value}"`;
-    panels.forEach(panel => {
+    checkPanels.forEach(panel => {
         SQLstring += ', ';
         if (panel.pass === true) {
             SQLstring += '"PASS"';
@@ -299,7 +160,7 @@ function reset() {
     idInput.value = '';
     idInput.focus();
     document.getElementById('notes').value = '';
-    panels.forEach(element => {
+    checkPanels.forEach(element => {
         element.passOrFail.innerText = 'PASS';
         element.passOrFail.style.color = 'rgb(0, 49, 2)';
         element.panel.style.borderColor = 'green';

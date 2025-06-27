@@ -1,5 +1,5 @@
 import { pool } from './db/db.js';
-import { password } from './password.js';
+import password from './passwordWord.js';
 
 import path from 'path';
 import express from 'express';
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 // Runs the app on port PORT.
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`);
 });
 
