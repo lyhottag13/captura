@@ -1,1 +1,1 @@
-export default 'cleaner';
+export default 'password';

@@ -29,7 +29,6 @@ export function initializePasswordQuery(handleSubmit) {
         if (event.key === 'Enter') {
             handleSubmit(passwordField.value);
         }
-        console.log('cool');
     })
     passwordDiv.appendChild(passwordField);
     passwordDiv.appendChild(passwordSubmit);
