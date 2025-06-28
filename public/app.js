@@ -1,5 +1,6 @@
 import { hidePassword, submitPassword, initializePasswordQuery } from './tools/passwordUtils.js';
 import checkPanels from './tools/checkPanels.js';
+import  testConnection  from './tools/testConnection.js';
 
 /*
     The total number of checks that will be performed. If this number
@@ -7,6 +8,7 @@ import checkPanels from './tools/checkPanels.js';
     mismatch error in the SQL query, so be careful.
 */
 async function main() {
+    testConnection();
     // Asks the user for a password, and only continues if it was good.
     initializePasswordQuery(handleSubmit);
 }

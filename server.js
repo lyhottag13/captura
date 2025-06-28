@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 // Runs the app on port PORT, so anyone can access on LAN on <IP Address>:<PORT>
-app.listen(PORT, '0.0.0.0',() => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Example app listening on port ${PORT}`);
 });
 
@@ -46,4 +46,14 @@ app.post('/api/password', async (req, res) => {
         through the code through the tablet to find the correct password.
     */ 
     res.json({ goodPassword: userInput === correctPassword });
+});
+
+app.post('/api/connection', async (req, res) => {
+    const ret = {};
+    try {
+        await pool.query('SELECT * FROM qa1');
+    } catch (err) {
+        ret.err = err;
+    }
+    return res.json(ret);
 });
