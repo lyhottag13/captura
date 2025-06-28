@@ -110,7 +110,7 @@ async function submitInspection() {
         Sidenote, there's no possibility for SQL injection, since the
         user can't directly input into the SQL string.
     */
-    let SQLstring = `INSERT INTO breville2 VALUES ("${document.getElementById('input').value}"`;
+    let SQLstring = `INSERT INTO qa1 VALUES ("${document.getElementById('input').value}"`;
     // Appends to the SQL string a pass or fail state for each panel.
     checkPanels.forEach(panel => {
         SQLstring += ', ';
@@ -120,7 +120,7 @@ async function submitInspection() {
             SQLstring += '"FAIL"';
         }
     });
-    SQLstring += `, "${document.getElementById('notes').value}");`;
+    SQLstring += `, "${document.getElementById('notes').value}", "${new Date().toLocaleString()}");`;
     const res = await fetch('/api/send', {
         method: "POST",
         headers: {
