@@ -1,6 +1,7 @@
 import { hidePassword, submitPassword, initializePasswordQuery } from './tools/passwordUtils.js';
 import checkPanels from './tools/checkPanels.js';
 import testConnection from './tools/testConnection.js';
+import checkNumber from './tools/checkNumber.js';
 
 /*
     The total number of checks that will be performed. If this number
@@ -110,7 +111,11 @@ async function submitInspection() {
         Sidenote, there's no possibility for SQL injection, since the
         user can't directly input into the SQL string.
     */
-    let SQLstring = `INSERT INTO qa1 VALUES ("${document.getElementById('input').value}"`;
+    let SQLstring = 'INSERT INTO qa1 (id';
+    for (let i = 0; i < checkNumber; i++) {
+        SQLstring += `, s${i + 1}`;
+    }
+    SQLstring += `, notes, fecha) VALUES ("${document.getElementById('input').value}"`;
     // Appends to the SQL string a pass or fail state for each panel.
     checkPanels.forEach(panel => {
         SQLstring += ', ';
@@ -120,7 +125,7 @@ async function submitInspection() {
             SQLstring += '"FAIL"';
         }
     });
-    SQLstring += `, "${document.getElementById('notes').value}", "${new Date().toLocaleString()}");`;
+    SQLstring += `, "${document.getElementById('notes').value}", "${new Date().toISOString()}");`;
     const res = await fetch('/api/send', {
         method: "POST",
         headers: {
