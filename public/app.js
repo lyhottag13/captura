@@ -142,11 +142,7 @@ async function submitInspection() {
     } else {
         const errorNumber = data.err.errno;
         let errorMessage = 'Algo fue mal. Comunicase con su departamento de TI.';
-        if (errorNumber === 1062) {
-            // Duplicate entry error.
-            errorMessage = 'Ya existe una entrada con ese identificador. Intente otro.';
-            scrollToTop();
-        } else if (errorNumber === 1136) {
+        if (errorNumber === 1136) {
             // Not enough columns error.
             errorMessage = 'Discrepancia de columnas. Póngase en contacto con el departamento de TI.'
         }
