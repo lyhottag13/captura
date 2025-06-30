@@ -1,6 +1,6 @@
 import { hidePassword, submitPassword, initializePasswordQuery } from './tools/passwordUtils.js';
 import checkPanels from './tools/checkPanels.js';
-import  testConnection  from './tools/testConnection.js';
+import testConnection from './tools/testConnection.js';
 
 /*
     The total number of checks that will be performed. If this number
@@ -141,6 +141,9 @@ async function submitInspection() {
             // Duplicate entry error.
             errorMessage = 'Ya existe una entrada con ese identificador. Intente otro.';
             scrollToTop();
+        } else if (errorNumber === 1136) {
+            // Not enough columns error.
+            errorMessage = 'Discrepancia de columnas. Póngase en contacto con el departamento de TI.'
         }
         window.alert(errorMessage);
     }
