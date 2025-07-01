@@ -125,7 +125,7 @@ async function submitInspection() {
             SQLstring += '"FAIL"';
         }
     });
-    SQLstring += `, "${document.getElementById('notes').value}", "${new Date().toISOString()}");`;
+    SQLstring += `, "${document.getElementById('notes').value}", "${new Date().toLocaleString('en-CA')}");`;
     const res = await fetch('/api/send', {
         method: "POST",
         headers: {
