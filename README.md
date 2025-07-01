@@ -105,6 +105,7 @@ CREATE TABLE `sys`.`breville` (
   `s49` VARCHAR(45) NULL,
   `s50` VARCHAR(45) NULL,
   `notes` VARCHAR(500) NULL,
+  `fecha` VARCHAR(100) NULL,
   PRIMARY KEY (`id`));
 ```
 4. Configure the settings in the project file `db.js` to match the machine's settings. Usually, only user and password have to be changed.
