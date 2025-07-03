@@ -50,7 +50,7 @@ By writing this IP address and the host port into the address bar of a browser (
 Only required if you're setting one up from scratch. Coto Technologies should already have one, if not, consult IT.
 1. Download and install the [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) and [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) apps from the official MySQL site.
 2. Inside of MySQL, enter the Local Instance. Login with the user and password you created.
-3. Paste this command into the center box, then click the lightning bolt to execute. This command creates a table named breville with 50 steps, an ID column, and a notes column.
+3. Paste this command into the center box, then click the lightning bolt to execute. This command creates a table named breville with 50 steps, an ID column, a notes column, and a date column.
 ```
 CREATE TABLE `sys`.`breville` (
   `id` VARCHAR(45) NOT NULL,
