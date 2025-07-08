@@ -30,8 +30,9 @@ Run these commands in your terminal to ensure you have the correct tools install
 npm -v
 node -v
 ```
-Then run this command to run the app:
+Then run these commands in sequence to run the app:
 ```
+npm ci
 node server.js
 ``` 
 Now there is a local instance of the app running on your machine. If the host machine does not have a firewall restriction on the host port (e.g. 80, 3000, 8080, or whichever you decide), then any machine connected to the same local network will be able to access the web app.
