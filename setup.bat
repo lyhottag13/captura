@@ -14,7 +14,7 @@ echo     database: '%database%'                    >> db.js
 echo });                                           >> db.js
 echo export default pool;                          >> db.js
 cd ..
-set /p appPassword=What's the password for the app?
+set /p appPassword=What's the password for the app? 
 echo export default '%appPassword%'; > passwordWord.js
 CALL pm2 delete captura
 CALL pm2 start server.js --name captura
