@@ -1,11 +1,11 @@
 import pool from './db/db.js';
 import correctPassword from './passwordWord.js';
+import port from './public/tools/port.js';
 
 import path from 'path';
 import express from 'express';
 import { fileURLToPath } from 'url';
 const app = express();
-const PORT = 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,8 +21,8 @@ app.get('/', (req, res) => {
 });
 
 // Runs the app on port PORT, so anyone can access on LAN on <IP Address>:<PORT>
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Example app listening on port ${PORT}`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Example app listening on port ${port}`);
 });
 
 // Receives the SQL string from the app, then executes it and returns any errors.

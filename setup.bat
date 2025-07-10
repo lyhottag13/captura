@@ -7,14 +7,41 @@ set /p database=What's the database?
 cd db
 echo import { createPool } from "mysql2/promise";  >  db.js
 echo const pool = createPool({                     >> db.js
-echo     host: '%host%',                           >> db.js
-echo     user: '%user%',                           >> db.js
-echo     password: '%password%',                   >> db.js
-echo     database: '%database%'                    >> db.js
+echo  host: '%host%',                              >> db.js
+echo  user: '%user%',                              >> db.js
+echo  password: '%password%',                      >> db.js
+echo  database: '%database%'                       >> db.js
 echo });                                           >> db.js
 echo export default pool;                          >> db.js
 cd ..
+
 set /p appPassword=What's the password for the app? 
 echo export default '%appPassword%'; > passwordWord.js
+
+set /p port=What's the desired localhost port? 
+
+echo export default %port%; > public\tools\port.js
+
+echo ^<?xml version="1.0" encoding="UTF-8"?^> > web.config
+echo ^<configuration^> >> web.config
+echo   ^<system.webServer^> >> web.config
+echo     ^<rewrite^> >> web.config
+echo       ^<rules^> >> web.config
+echo         ^<rule name="Force HTTPS"^> >> web.config
+echo           ^<match url="(.*)" /^> >> web.config
+echo           ^<conditions^> >> web.config
+echo             ^<add input="{HTTPS}" pattern="^OFF$" /^> >> web.config
+echo           ^</conditions^> >> web.config
+echo           ^<action type="Redirect" url="https://{HTTP_HOST}/{R:1}" /^> >> web.config
+echo         ^</rule^> >> web.config
+echo         ^<rule name="ReverseProxyInboundRule1" stopProcessing="true"^> >> web.config
+echo           ^<match url="(.*)" /^> >> web.config
+echo           ^<action type="Rewrite" url="http://localhost:%port%/{R:1}" /^> >> web.config
+echo         ^</rule^> >> web.config
+echo       ^</rules^> >> web.config
+echo     ^</rewrite^> >> web.config
+echo   ^</system.webServer^> >> web.config
+echo ^</configuration^> >> web.config
+
 CALL pm2 delete captura
 CALL pm2 start server.js --name captura
