@@ -11,7 +11,7 @@ echo     user: '%user%',                           >> db.js
 echo     password: '%password%',                   >> db.js
 echo     database: '%database%'                    >> db.js
 echo });                                           >> db.js
-echo export default pool;
+echo export default pool;                          >> db.js
 cd ..
 set /p appPassword=What's the password for the app?
 echo export default '%appPassword%'; > passwordWord.js
