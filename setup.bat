@@ -1,4 +1,5 @@
 @echo OFF
+CALL npm ci
 set /p host=What's the host IP? 
 set /p user=What's the user? 
 set /p password=What's the password? 
