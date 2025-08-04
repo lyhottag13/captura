@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 // Runs the app on port PORT, so anyone can access on LAN on <IP Address>:<PORT>
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, '127.0.0.1', () => {
     console.log(`Example app listening on port ${port}`);
 });
 
