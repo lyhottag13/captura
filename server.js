@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'app.html'));
 });
 
-// Runs the app on port PORT, so anyone can access on LAN on <IP Address>:<PORT>
+// Runs the app on port PORT.
 app.listen(port, '127.0.0.1', () => {
     console.log(`Example app listening on port ${port}`);
 });
@@ -51,7 +51,7 @@ app.post('/api/password', async (req, res) => {
 app.post('/api/connection', async (req, res) => {
     const ret = {};
     try {
-        await pool.query('SELECT * FROM qa1');
+        await pool.query('SELECT 1 FROM qa1 LIMIT 1');
     } catch (err) {
         ret.err = err;
     }
