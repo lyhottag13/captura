@@ -1,20 +1,22 @@
 import { hidePassword, submitPassword, initializePasswordQuery } from './tools/passwordUtils.js';
 import checkPanels from './tools/checkPanels.js';
 import testConnection from './tools/testConnection.js';
-import checkNumber from './tools/checkNumber.js';
-
 /*
 The total number of checks that will be performed. If this number
 doesn't match the number of checks in the database, there will be a
 mismatch error in the SQL query, so be careful.
 */
 async function main() {
-    testConnection();
+    const testData = await testConnection();
+    if (testData.err) {
+        return window.alert(testData.err);
+    }
+    window.alert('Conexion exitosa.');
     // Asks the user for a password, and only continues if it was good.
-    initializePasswordQuery(handleSubmit);
+    initializePasswordQuery(handlePasswordSubmit);
 }
 
-async function handleSubmit(password) {
+async function handlePasswordSubmit(password) {
     const isValidPassword = await submitPassword(password);
     if (isValidPassword === false) {
         // Reloads the page if the password was incorrect to prevent use.
@@ -73,7 +75,7 @@ function initializePanels() {
     notes.cols = '40';
 
     const submitButton = document.createElement('button');
-    submitButton.addEventListener('click', () => submitInspection());
+    submitButton.addEventListener('click', submitInspection);
     submitButton.id = 'submit';
     submitButton.innerText = 'Enviar';
     submitButton.addEventListener('mouseover', () => {
@@ -102,34 +104,42 @@ async function submitInspection() {
     const id = document.getElementById('input').value;
     const isValidId = checkId(id);
     if (!isValidId) {
-        window.alert('ID invalida. Por favor, introduzca una identificacion de 6 digitos.');
         scrollToTop();
-        return;
+        return window.alert('ID invalida. Por favor, introduzca una identificacion de 6 digitos.');
     }
     const notes = document.getElementById('notes').value;
-    const res = await fetch('/api/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id,
-            checkPanels,
-            notes
-        })
-    });
-    const data = await res.json();
-    console.log(data);
-    // If there is no error, then the submission was successful. Else, it describes the error.
-    if (!data.err) {
+    try {
+        const res = await fetch('/api/inspection', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id,
+                checkPanels,
+                notes
+            })
+        });
+        if (!res.ok) {
+            throw new Error('Something went wrong with the API call.');
+        }
+        const data = await res.json();
+        console.log(data);
+        // If there is an error, then the submission failed.
+        if (data.err) {
+            const errorNumber = data.err.errno;
+            let err;
+            if (errorNumber === 1136) {
+                // Not enough columns error.
+                err = 'Discrepancia de columnas.\n';
+            } else {
+                err = 'Algo fue mal.\n';
+            }
+            err += 'Comunicase con su departamento de TI';
+            return window.alert(err);
+        }
         window.alert('Submision exitosa.');
         reset();
-    } else {
-        const errorNumber = data.err.errno;
-        let errorMessage = 'Algo fue mal. Comunicase con su departamento de TI.';
-        if (errorNumber === 1136) {
-            // Not enough columns error.
-            errorMessage = 'Discrepancia de columnas. Póngase en contacto con el departamento de TI.'
-        }
-        window.alert(errorMessage);
+    } catch (err) {
+        window.alert(err.message);
     }
 }
 

@@ -22,15 +22,15 @@ app.get('/', (req, res) => {
 
 // Runs the app on port PORT.
 app.listen(port, '127.0.0.1', () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Captura listening on port ${port}`);
 });
 
 // Receives the SQL string properties from the app, creates the SQLstring, then executes it.
-app.post('/api/send', async (req, res) => {
+app.post('/api/inspection', async (req, res) => {
     /** @type {{id: string, checkPanels: CheckPanel[], notes: string}} */
     const { id, checkPanels, notes } = req.body;
 
-    const columns = ['id']; 
+    const columns = ['id'];
     const placeholders = ['?'];
     /* 
     Builds the SQL string dynamically, so that we can handle 10, 20, or 50 checks.
@@ -53,41 +53,44 @@ app.post('/api/send', async (req, res) => {
     // Creates an array of 1/0 (or PASS/FAIL) based on checkPanels.
     const passOrFails = checkPanels.map(panel => panel.pass ? 1 : 0);
 
-    // Builds the SQL query based on the columns and placeholders created.
     const now = new Date();
+    const datetime = `${now.toLocaleDateString('en-CA')} ${now.toLocaleTimeString('en-CA', { hour12: false })}`;
+
+    // Builds the SQL query based on the columns and placeholders created.
     const SQLString = `INSERT INTO qa1 (${columns.join(', ')}) VALUES (${placeholders.join(', ')})`;
     const values = [
         id,
         ...passOrFails,
         notes,
-        `${now.toLocaleDateString('en-CA')} ${now.toLocaleTimeString('en-CA', {hour12: false})}`
+        datetime
     ];
-    const ret = {};
     try {
-        await pool.execute(SQLString, values);
+        const [response] = await pool.execute(SQLString, values);
+        console.log(response);
+        res.status(200).json({});
     } catch (err) {
-        ret.err = err;
+        res.status(500).json({ err });
     }
-    res.json(ret);
 });
 
 // Receives the password from the user's input. Change PASSWORD to whatever you need.
 app.post('/api/password', async (req, res) => {
-    const { userInput } = req.body;
+    /** @type {{password: string}} */
+    const { password } = req.body;
+    const goodPassword = password === correctPassword;
     /*
     Sends a JSON response containing the validity of the password. I wanted
     this server-side even though it's unlikely an operator will go
-    through the code through the tablet to find the correct password.
+    through the code on the tablet to find the correct password.
     */
-    res.json({ goodPassword: userInput === correctPassword });
+    res.status(goodPassword ? 200 : 400).json({ goodPassword });
 });
 
-app.post('/api/connection', async (req, res) => {
-    const ret = {};
+app.get('/api/connection', async (_req, res) => {
     try {
-        await pool.query('SELECT 1 FROM qa1 LIMIT 1');
+        await pool.query('SELECT 1');
+        return res.status(200).json({});
     } catch (err) {
-        ret.err = err;
+        return res.status(500).json({ err });
     }
-    return res.json(ret);
 });
