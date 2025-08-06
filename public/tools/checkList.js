@@ -51,6 +51,6 @@ checkList.push("Botones Ctrl Panel");
 checkList.push("Manómetro Ctrl Panel");
 checkList.push("Estampado");
 checkList.push('Ruteo de cable tierra');
-checkList.push('Resorte mangera');
+checkList.push('Resorte manguera');
 
 export default checkList;
