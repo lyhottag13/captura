@@ -40,7 +40,7 @@ app.post('/api/inspection', async (req, res) => {
     directly input into the SQL string, but it's still good practice to use
     parameterized queries.
     */
-    // Inserts s1, s2, ..., s49, s50. Also adds a new ? for each column.
+    // Inserts s1, s2, ..., s51, s52. Also adds a new ? for each column.
     checkPanels.forEach((_, i) => {
         columns.push(`s${i + 1}`);
         placeholders.push('?');
@@ -62,13 +62,14 @@ app.post('/api/inspection', async (req, res) => {
         id,
         ...passOrFails,
         notes,
-        datetime
+        datetime,
     ];
     try {
         const [response] = await pool.execute(SQLString, values);
         console.log(response);
         res.status(200).json({});
     } catch (err) {
+        console.log(err);
         res.status(500).json({ err });
     }
 });
